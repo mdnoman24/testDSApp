@@ -30,15 +30,17 @@ class Order(HashModel):
     fee : float
     total : float
     status : str  # pending, paid, failed
+    time: str = time.strftime("%Y-%m-%d %H:%M:%S")
 
     class Meta:
         database = redis
 
+
 @app.get("/orders/{pk}")
 def get_order(pk: str):
-    order = Order.get(pk)
-    redis.xadd('refund_order', order.dict(), '*')
-    return order
+    return Order.get(pk)
+
+
 @app.get("/orders")
 def all_orders():
     return [Order.get(pk) for pk in Order.all_pks()]
